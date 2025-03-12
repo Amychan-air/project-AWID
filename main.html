@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>香港智障服務人員嘉許計劃2025</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: url('background.png') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+        }
+        
+        .logo-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        
+        .logo-container img {
+            max-height: 80px;
+            margin: 10px;
+        }
+        
+        .logo-item {
+            display: flex;
+            align-items: center;
+            margin: 0 15px;
+        }
+        
+        .logo-text {
+            font-weight: bold;
+            color: #003366;
+            font-size: 24px;
+            max-width: 300px;
+            line-height: 1.3;
+        }
+        
+        .logo-item.text-right {
+            flex-direction: row;
+            gap: 20px;
+        }
+        
+        .logo-item.text-left {
+            flex-direction: row-reverse;
+            gap: 20px;
+        }
+        
+        .logo-item.text-right .logo-text {
+            margin-left: 0;
+            text-align: left;
+        }
+        
+        .logo-item.text-left .logo-text {
+            margin-right: 0;
+            text-align: right;
+        }
+        
+        h1 {
+            font-size: 28px;
+            color: #003366;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        h2 {
+            font-size: 20px;
+            color: #005599;
+            margin: 20px 0 10px 0;
+        }
+        
+        p, li {
+            margin-bottom: 10px;
+        }
+        
+        ul, ol {
+            padding-left: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+            padding: 15px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 5px;
+        }
+        
+        .award-group {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        .schedule {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .schedule td, .schedule th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        
+        .schedule tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .emphasis {
+            font-weight: bold;
+            color: #003366;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .floating-signup {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        
+        .signup-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+        
+        .signup-link:hover {
+            opacity: 0.8;
+        }
+        
+        .floating-signup:hover {
+            transform: translateY(-5px);
+        }
+        
+        .floating-signup-text {
+            font-size: 20px;
+            font-weight: bold;
+            color: #003366;
+            margin-bottom: 10px;
+        }
+        
+        .floating-signup img {
+            width: 120px;
+            height: 120px;
+            display: block;
+            margin: 0 auto;
+            margin-bottom: 10px;
+        }
+        
+        .whatsapp-text {
+            font-size: 16px;
+            color: #003366;
+            margin-top: 10px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+        
+        .whatsapp-number {
+            color: #25D366;  /* WhatsApp品牌色 */
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+        
+        .whatsapp-number:hover {
+            transform: scale(1.05);
+        }
+        
+        /* 手機版響應式設計 */
+        @media screen and (max-width: 768px) {
+            .container {
+                padding: 15px;
+                margin: 10px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+            
+            h2 {
+                font-size: 18px;
+            }
+            
+            .logo-container img {
+                max-height: 60px;
+            }
+            
+            .logo-text {
+                font-size: 20px;
+                max-width: 250px;
+            }
+            
+            .logo-container {
+                flex-direction: column;
+            }
+            
+            .logo-item {
+                margin: 10px 0;
+            }
+            
+            .section {
+                padding: 10px;
+            }
+            
+            .award-group {
+                padding: 10px;
+            }
+            
+            .floating-signup {
+                bottom: 20px;
+                right: 20px;
+                padding: 10px;
+            }
+            
+            .floating-signup-text {
+                font-size: 16px;
+            }
+            
+            .floating-signup img {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .whatsapp-text {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo-item text-right">
+                    <img src="logo.webp" alt="香港智障服務人員協會有限公司">
+                    <div class="logo-text">香港智障服務人員協會有限公司</div>
+                </div>
+                <div class="logo-item text-left">
+                    <img src="logo-caritas.webp" alt="明愛康復服務 明愛特殊教育服務">
+                    <div class="logo-text">明愛康復服務 明愛特殊教育服務</div>
+                </div>
+            </div>
+            <h1>香港智障服務人員嘉許計劃2025</h1>
+            <p>香港智障服務人員協會有限公司 主辦 | 明愛康復服務 明愛特殊教育服務 協辦 | XXXXXX 贊助</p>
+        </header>
+        
+        <div class="content">
+            <div class="section">
+                <h2>計劃理念：</h2>
+                <p>為推動香港智障服務持續發展，特舉辦「香港智障服務人員嘉許計劃」。通過業界參與，藉表揚優秀人員，共同努力，促進香港智障服務的卓越質素，達致共善社會。</p>
+            </div>
+            
+            <div class="section">
+                <h2>計劃目標：</h2>
+                <ul>
+                    <li>表揚優秀的香港智障服務人員</li>
+                    <li>鼓勵更多新秀加入香港智障服務</li>
+                    <li>凝聚香港智障服務業界力量，建立健康、積極而正向的專業形象</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>嘉許獎項：(獎座+HK$1,000 元禮劵)</h2>
+                <p>學前、學齡及成人智障服務機構/單位，各設以下組別及獎項：</p>
+                
+                <div class="award-group">
+                    <h3>專業人員組別</h3>
+                    <p>嘉許獎 獎項：5 名</p>
+                    <p>新秀獎 獎項：2 名</p>
+                </div>
+                
+                <div class="award-group">
+                    <h3>專職人員組別</h3>
+                    <p>嘉許獎 獎項：5 名</p>
+                    <p>新秀獎 獎項：2 名</p>
+                </div>
+                
+                <p><strong>備註：</strong> 專業人員(如：教師/社工/治療師/護士/心理學家等) <br>
+                專職人員(如：導師/福利工作員/保健員/助理/文員/庶務員/司機/廚師等)</p>
+                
+                <p>另設：獲獎者的提名人將獲頒感謝狀及禮劵</p>
+            </div>
+            
+            <div class="section">
+                <h2>評審標準：</h2>
+                <ul>
+                    <li><span class="emphasis">知識技能：</span>應用到位，質量並重，勇於創新，持續進修</li>
+                    <li><span class="emphasis">服務態度：</span>關愛對象，盡心盡責，回應需求，應對轉變</li>
+                    <li><span class="emphasis">團隊協作：</span>以身作則，積極協作，重視溝通，凝聚歸屬</li>
+                    <li><span class="emphasis">個人素質：</span>敬業樂業，貢獻所長，樂觀積極，正向思維</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>報名資格及詳情：</h2>
+                <ul>
+                    <li>參加者須由本港註冊的學前、學齡或成人智障服務機構/單位提名</li>
+                    <li>獲提名人士先經由本理事會進行甄選處理；然後經「香港智障服務人員嘉許計劃 2025 籌委會」作初步甄選</li>
+                    <li>通過初步甄選之被提名人須再經「香港智障服務人員嘉許計劃 2025 評審團」進行的最終評選(包括約談面見)</li>
+                    <li>評審團成員均來自業界專業領域的社會人士/資深學者，根據被提名人於其服務專業或專職範疇/工作方面的優秀表現/貢獻後，選出嘉許名單</li>
+                </ul>
+                
+                <div class="award-group">
+                    <h3>嘉許獎</h3>
+                    <ul>
+                        <li>被提名人士須在同一機構/單位任職專業人員/專職人員年資 3 年或以上</li>
+                        <li>每一服務單位提名，以各 1 人為限</li>
+                    </ul>
+                </div>
+                
+                <div class="award-group">
+                    <h3>新秀獎</h3>
+                    <ul>
+                        <li>被提名人士須在同一機構/單位任職專業人員/專職人員年資不少於 1 年及不足 3 年</li>
+                        <li>每一服務單位提名，以各 1 人為限</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h2>注意事項：</h2>
+                <ul>
+                    <li>被提名人須受聘於本港註冊的學前、學齡或成人智障服務機構/單位，並在本港工作的全職員工</li>
+                    <li>被提名人須親自出席由本會「香港智障服務人員嘉許計劃2025評審團」安排之最終評選約見面談</li>
+                    <li>獲獎人士須參與活動期間的媒體訪問(視乎大會活動安排)</li>
+                    <li>提名人不可成為參選人</li>
+                    <li>本計劃不設上訴安排，一切全依本會評審標準/準則及結果頒布為準</li>
+                </ul>
+                <p><strong>備註：</strong>為避免利益衝突，本理事會成員及其家屬不得參與是次嘉許計劃。</p>
+            </div>
+            
+            <div class="section">
+                <h2>報名(提名)及截止日期：</h2>
+                <p>2025 年 5 月 1 日起接受提名至 6 月 15 日(深夜 12 時)截止</p>
+            </div>
+            
+            <div class="section">
+                <h2>報名(提名)方法及表格：</h2>
+                <ul>
+                    <li>請以本會特設的「香港智障服務人員嘉許計劃2025」二維碼報名及遞交提名表格</li>
+                    <li>提名人須於截止日期前完成填寫及遞交「香港智障服務人員嘉許計劃2025」提名表格（只限以本會特設的「香港智障服務人員嘉許計劃2025」二維碼遞交）</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2>計劃及評審程序：</h2>
+                <table class="schedule">
+                    <tr>
+                        <td>2025 年 6 月 15 日(深夜 12 時)</td>
+                        <td>報名(提名)截止</td>
+                    </tr>
+                    <tr>
+                        <td>2025 年 6-7 月</td>
+                        <td>海選處理(香港智障服務人員協會理事會)</td>
+                    </tr>
+                    <tr>
+                        <td>2025 年 7-8 月</td>
+                        <td>初選評審(「香港智障服務人員嘉許計劃 2025 籌委會」)</td>
+                    </tr>
+                    <tr>
+                        <td>2025 年 8-10 月</td>
+                        <td>最終評選約談面見(「香港智障服務人員嘉許計劃 2025 評審團」)</td>
+                    </tr>
+                    <tr>
+                        <td>2025 年 11 月</td>
+                        <td>公布得獎名單</td>
+                    </tr>
+                    <tr>
+                        <td>2025 年 12 月 13 日(六)上午(暫定)</td>
+                        <td>周年大會暨嘉許典禮暫定典禮場地：明愛樂恩學校 1/F 禮堂(觀塘彩興路 20 號)</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2025 香港智障服務人員協會有限公司 版權所有</p>
+        </footer>
+    </div>
+    <div class="floating-signup">
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLScwV8a4fDVv_0qgQdu2YdeZAQuZIWQpJqOLP1QufXdbouTRGw/viewform?usp=dialog" target="_blank" class="signup-link">
+            <div class="floating-signup-text">報名連結</div>
+            <img src="qrcode.png" alt="報名QR Code">
+        </a>
+        <div class="whatsapp-text">歡迎查詢：<br><a href="https://wa.me/85269766153?text=你好，我想查詢香港智障服務人員嘉許計劃2025的詳情" class="whatsapp-number" target="_blank">WhatsApp 69766153</a></div>
+    </div>
+
+    <!-- 註冊Service Worker -->
+    <script>
+        // 檢查瀏覽器是否支持Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // 嘗試註冊Service Worker
+                navigator.serviceWorker.register('./workers.js')
+                    .then(registration => {
+                        console.log('Service Worker註冊成功:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Service Worker註冊失敗，網站依然可以正常使用:', error);
+                    });
+            });
+        } else {
+            console.log('當前瀏覽器不支持Service Worker，網站依然可以正常使用');
+        }
+    </script>
+</body>
+</html>
