@@ -33,3 +33,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 }); 
+
+//    SEGEN KOMET 寶力創科 製作
+//    https://www.segenkomet.com/
