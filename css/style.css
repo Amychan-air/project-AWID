@@ -430,3 +430,13 @@ footer a:hover {
     SEGEN KOMET 寶力創科 製作
     https://www.segenkomet.com/
 */
+
+.sponsor-box {
+    display: inline-block;
+    padding: 5px 15px;
+    border: 2px solid #003366;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.9);
+    font-weight: bold;
+    color: #003366;
+}
