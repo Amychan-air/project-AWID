@@ -1,6 +1,9 @@
 // 等待頁面加載完成後執行
 document.addEventListener('DOMContentLoaded', function() {
     const floatingSignup = document.querySelector('.floating-signup');
+    let lastScrollTop = 0;
+    let isScrolling = false;
+    let scrollTimeout;
     
     // 檢查是否為移動設備
     function isMobile() {
@@ -30,6 +33,27 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         } else {
             floatingSignup.classList.add('show');
+        }
+    });
+
+    window.addEventListener('scroll', function() {
+        if (!isScrolling) {
+            isScrolling = true;
+            window.requestAnimationFrame(function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const windowHeight = window.innerHeight;
+                const documentHeight = document.documentElement.scrollHeight;
+                
+                // 当滚动到底部时隐藏
+                if (scrollTop + windowHeight >= documentHeight - 100) {
+                    floatingSignup.classList.add('hide');
+                } else {
+                    floatingSignup.classList.remove('hide');
+                }
+                
+                lastScrollTop = scrollTop;
+                isScrolling = false;
+            });
         }
     });
 }); 

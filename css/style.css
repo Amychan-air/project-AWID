@@ -217,15 +217,14 @@ footer a:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     text-align: center;
     z-index: 1000;
-    transition: transform 0.3s ease;
-    /* 初始隱藏狀態 */
-    transform: translateX(150%);
-    opacity: 0;
-}
-
-.floating-signup.show {
+    transition: all 0.3s ease;
     transform: translateX(0);
     opacity: 1;
+}
+
+.floating-signup.hide {
+    transform: translateX(150%);
+    opacity: 0;
 }
 
 .signup-link {
