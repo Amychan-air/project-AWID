@@ -1,6 +1,6 @@
 # worker/wrangler.toml
 name = 'project-awid'
-main = "worker/worker.js"
+main = "worker/index.js"
 compatibility_date = "2024-01-01"
 
 [vars]
