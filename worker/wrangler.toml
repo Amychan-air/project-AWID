@@ -6,7 +6,3 @@ compatibility_date = "2024-01-01"
 GITHUB_REPO_OWNER = "Amychan-air"
 GITHUB_REPO_NAME = "project-AWID"
 GITHUB_BRANCH = "main"
-
-# 密钥配置
-[secrets]
-GITHUB_TOKEN 
