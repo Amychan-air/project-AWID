@@ -1,1 +1,1 @@
-这是新的内容，来自 Cloudflare Workers！
+v1.0 这是新的内容，来自 Cloudflare Workers！
