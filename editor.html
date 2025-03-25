@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summernote 編輯器</title>
+    <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-lite.min.js"></script>
+</head>
+<body>
+    <h2>編輯頁面內容</h2>
+    <textarea id="editor"></textarea>
+    <button onclick="saveContent()">儲存變更</button>
+
+    <script>
+        $(document).ready(function() {
+            $('#editor').summernote({ height: 300 });
+        });
+
+        function saveContent() {
+            var content = $('#editor').summernote('code');
+            console.log(content);  // 可以傳送到 PHP 伺服器
+        }
+    </script>
+</body>
+</html>
