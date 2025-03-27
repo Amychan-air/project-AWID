@@ -14,7 +14,7 @@ export function adminPage() {
   <!-- 引入 Summernote -->
   <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-zh-CN.min.js"></script>
   
@@ -23,6 +23,36 @@ export function adminPage() {
     .note-editor { margin-top: 20px; }
     .btn-save { margin-top: 20px; }
     .file-selector { margin-bottom: 20px; }
+    .section-editor { margin-bottom: 30px; border: 1px solid #ddd; border-radius: 5px; }
+    .section-title { 
+      margin: 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 5px 5px 0 0;
+    }
+    .section-title:hover {
+      background: #e9ecef;
+    }
+    .section-title h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+    .section-content { padding: 15px; }
+    .editor-container { margin-top: 20px; }
+    .section-list { max-height: 600px; overflow-y: auto; }
+    .section-preview { margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+    .collapse-icon {
+      transition: transform 0.2s;
+    }
+    .collapsed .collapse-icon {
+      transform: rotate(-90deg);
+    }
   </style>
 </head>
 <body>
@@ -38,24 +68,22 @@ export function adminPage() {
       <button id="loadBtn" class="btn btn-primary mt-2">加载文件</button>
     </div>
     
-    <div id="editor"></div>
-    <button id="saveBtn" class="btn btn-success btn-save">保存更改</button>
+    <div id="sectionsContainer" class="section-list mt-4"></div>
+    
+    <button id="saveAllBtn" class="btn btn-success btn-save" style="display:none;">保存所有更改</button>
     <div id="statusMsg" class="alert mt-3" style="display: none;"></div>
   </div>
 
   <script>
     $(document).ready(function() {
+      let originalHtml = ''; // 存储原始HTML
+      let sections = []; // 存储所有section
+      
       // 初始化编辑器
-      function initEditor() {
-        $('#editor').summernote({
-          height: 500,
+      function initSectionEditor(element) {
+        $(element).summernote({
+          height: 300,
           lang: 'zh-CN',
-          callbacks: {
-            onImageUpload: function(files) {
-              // 这里可以添加图片上传功能
-              alert('目前不支持直接上传图片，请使用图片URL');
-            }
-          },
           toolbar: [
             ['style', ['style']],
             ['font', ['bold', 'underline', 'clear']],
@@ -64,7 +92,14 @@ export function adminPage() {
             ['table', ['table']],
             ['insert', ['link', 'picture']],
             ['view', ['fullscreen', 'codeview', 'help']]
-          ]
+          ],
+          callbacks: {
+            onChange: function(contents) {
+              // 实时预览
+              const previewEl = $(element).closest('.section-content').find('.section-preview');
+              previewEl.html(contents);
+            }
+          }
         });
       }
       
@@ -86,10 +121,9 @@ export function adminPage() {
             return response.text();
           })
           .then(content => {
-            if (!$('#editor').hasClass('note-editor')) {
-              initEditor();
-            }
-            $('#editor').summernote('code', content);
+            originalHtml = content;
+            parseHtmlSections(content);
+            $('#saveAllBtn').show();
             $('#statusMsg').removeClass('alert-info')
               .addClass('alert-success')
               .text('文件加载成功！')
@@ -104,25 +138,107 @@ export function adminPage() {
           });
       });
       
-      // 保存文件内容
-      $('#saveBtn').click(function() {
-        const fileName = $('#fileSelect').val();
-        const content = $('#editor').summernote('code');
+      // 解析HTML，提取所有class="section"的元素
+      function parseHtmlSections(html) {
+        // 创建临时DOM解析HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
         
-        if (!content) {
-          $('#statusMsg').removeClass('alert-success alert-info')
-            .addClass('alert-danger')
-            .text('内容不能为空！')
-            .show();
+        // 找到所有class为section的元素
+        const sectionElements = doc.querySelectorAll('.section');
+        
+        if (sectionElements.length === 0) {
+          $('#sectionsContainer').html('<div class="alert alert-warning">未找到class="section"的元素</div>');
           return;
         }
+        
+        sections = [];
+        let sectionHtml = '';
+        
+        // 遍历所有section元素
+        sectionElements.forEach((sectionEl, index) => {
+          const sectionId = \`section-\${index}\`;
+          const sectionHtmlContent = sectionEl.innerHTML;
+          
+          // 获取section标题（如果有h2标签）
+          const titleEl = sectionEl.querySelector('h2');
+          const sectionTitle = titleEl ? titleEl.textContent : \`区块 \${index + 1}\`;
+          
+          sections.push({
+            id: sectionId,
+            element: sectionEl,
+            html: sectionHtmlContent,
+            index: index
+          });
+          
+          sectionHtml += \`
+            <div class="section-editor">
+              <div class="section-title collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-\${sectionId}" aria-expanded="true">
+                <h3>\${sectionTitle}</h3>
+                <span class="collapse-icon">▼</span>
+              </div>
+              <div id="collapse-\${sectionId}" class="collapse">
+                <div class="section-content">
+                  <div class="editor-container" id="editor-\${sectionId}"></div>
+                  <div class="section-preview"></div>
+                </div>
+              </div>
+            </div>
+          \`;
+        });
+        
+        // 添加编辑器到页面
+        $('#sectionsContainer').html(sectionHtml);
+        
+        // 初始化所有编辑器
+        sections.forEach(section => {
+          const editorEl = $(\`#editor-\${section.id}\`);
+          initSectionEditor(editorEl);
+          editorEl.summernote('code', section.html);
+        });
+
+        // 初始化折叠功能
+        const collapseElements = document.querySelectorAll('.collapse');
+        collapseElements.forEach(collapseEl => {
+          new bootstrap.Collapse(collapseEl, {
+            toggle: false
+          });
+        });
+
+        // 添加折叠图标动画
+        document.querySelectorAll('.section-title').forEach(titleEl => {
+          titleEl.addEventListener('click', function() {
+            const icon = this.querySelector('.collapse-icon');
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            icon.style.transform = isExpanded ? 'rotate(-90deg)' : 'rotate(0deg)';
+            this.setAttribute('aria-expanded', !isExpanded);
+          });
+        });
+      }
+      
+      // 保存所有更改
+      $('#saveAllBtn').click(function() {
+        // 更新原始HTML中的内容
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(originalHtml, 'text/html');
+        
+        sections.forEach(section => {
+          const editorContent = $(\`#editor-\${section.id}\`).summernote('code');
+          const sectionEl = doc.querySelectorAll('.section')[section.index];
+          sectionEl.innerHTML = editorContent;
+        });
+        
+        // 获取更新后的HTML
+        const updatedHtml = doc.documentElement.outerHTML;
+        
+        const fileName = $('#fileSelect').val();
         
         $('#statusMsg').removeClass('alert-success alert-danger')
           .addClass('alert-info')
           .text('正在保存...')
           .show();
           
-        // 发送到服务器保存 - 使用 JSON 请求体
+        // 发送到服务器保存
         fetch('admin-page', {
           method: 'POST',
           headers: {
@@ -130,7 +246,7 @@ export function adminPage() {
           },
           body: JSON.stringify({
             filePath: fileName,
-            content: content
+            content: updatedHtml
           })
         })
         .then(response => response.json())

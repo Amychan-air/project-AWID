@@ -122,6 +122,9 @@ export default {
         headers: {
           "Content-Type": contentType,
           "Access-Control-Allow-Origin": "*", // 允許 CORS
+          "Cache-Control": contentType === "text/html" ? "no-cache, no-store, must-revalidate" : "public, max-age=86400", // HTML 文件不缓存
+          "Pragma": contentType === "text/html" ? "no-cache" : "", // 兼容 HTTP/1.0
+          "Expires": contentType === "text/html" ? "0" : ""
         }
       });
     }

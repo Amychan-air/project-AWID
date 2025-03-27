@@ -1,7 +1,7 @@
 var __defProp = Object.defineProperty;
 var __name = (target, value) => __defProp(target, "name", { value, configurable: true });
 
-// .wrangler/tmp/bundle-FQp0hw/checked-fetch.js
+// .wrangler/tmp/bundle-DOIEyJ/checked-fetch.js
 var urls = /* @__PURE__ */ new Set();
 function checkURL(request, init) {
   const url = request instanceof URL ? request : new URL(
@@ -119,7 +119,7 @@ function adminPage() {
   <!-- \u5F15\u5165 Summernote -->
   <link href="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"><\/script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"><\/script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"><\/script>
   <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/summernote-bs4.min.js"><\/script>
   <script src="https://cdn.jsdelivr.net/npm/summernote@0.8.18/dist/lang/summernote-zh-CN.min.js"><\/script>
   
@@ -128,6 +128,36 @@ function adminPage() {
     .note-editor { margin-top: 20px; }
     .btn-save { margin-top: 20px; }
     .file-selector { margin-bottom: 20px; }
+    .section-editor { margin-bottom: 30px; border: 1px solid #ddd; border-radius: 5px; }
+    .section-title { 
+      margin: 0;
+      padding: 15px;
+      background: #f8f9fa;
+      border-bottom: 1px solid #ddd;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 5px 5px 0 0;
+    }
+    .section-title:hover {
+      background: #e9ecef;
+    }
+    .section-title h3 {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: bold;
+    }
+    .section-content { padding: 15px; }
+    .editor-container { margin-top: 20px; }
+    .section-list { max-height: 600px; overflow-y: auto; }
+    .section-preview { margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 5px; }
+    .collapse-icon {
+      transition: transform 0.2s;
+    }
+    .collapsed .collapse-icon {
+      transform: rotate(-90deg);
+    }
   </style>
 </head>
 <body>
@@ -143,24 +173,22 @@ function adminPage() {
       <button id="loadBtn" class="btn btn-primary mt-2">\u52A0\u8F7D\u6587\u4EF6</button>
     </div>
     
-    <div id="editor"></div>
-    <button id="saveBtn" class="btn btn-success btn-save">\u4FDD\u5B58\u66F4\u6539</button>
+    <div id="sectionsContainer" class="section-list mt-4"></div>
+    
+    <button id="saveAllBtn" class="btn btn-success btn-save" style="display:none;">\u4FDD\u5B58\u6240\u6709\u66F4\u6539</button>
     <div id="statusMsg" class="alert mt-3" style="display: none;"></div>
   </div>
 
   <script>
     $(document).ready(function() {
+      let originalHtml = ''; // \u5B58\u50A8\u539F\u59CBHTML
+      let sections = []; // \u5B58\u50A8\u6240\u6709section
+      
       // \u521D\u59CB\u5316\u7F16\u8F91\u5668
-      function initEditor() {
-        $('#editor').summernote({
-          height: 500,
+      function initSectionEditor(element) {
+        $(element).summernote({
+          height: 300,
           lang: 'zh-CN',
-          callbacks: {
-            onImageUpload: function(files) {
-              // \u8FD9\u91CC\u53EF\u4EE5\u6DFB\u52A0\u56FE\u7247\u4E0A\u4F20\u529F\u80FD
-              alert('\u76EE\u524D\u4E0D\u652F\u6301\u76F4\u63A5\u4E0A\u4F20\u56FE\u7247\uFF0C\u8BF7\u4F7F\u7528\u56FE\u7247URL');
-            }
-          },
           toolbar: [
             ['style', ['style']],
             ['font', ['bold', 'underline', 'clear']],
@@ -169,7 +197,14 @@ function adminPage() {
             ['table', ['table']],
             ['insert', ['link', 'picture']],
             ['view', ['fullscreen', 'codeview', 'help']]
-          ]
+          ],
+          callbacks: {
+            onChange: function(contents) {
+              // \u5B9E\u65F6\u9884\u89C8
+              const previewEl = $(element).closest('.section-content').find('.section-preview');
+              previewEl.html(contents);
+            }
+          }
         });
       }
       
@@ -191,10 +226,9 @@ function adminPage() {
             return response.text();
           })
           .then(content => {
-            if (!$('#editor').hasClass('note-editor')) {
-              initEditor();
-            }
-            $('#editor').summernote('code', content);
+            originalHtml = content;
+            parseHtmlSections(content);
+            $('#saveAllBtn').show();
             $('#statusMsg').removeClass('alert-info')
               .addClass('alert-success')
               .text('\u6587\u4EF6\u52A0\u8F7D\u6210\u529F\uFF01')
@@ -209,25 +243,107 @@ function adminPage() {
           });
       });
       
-      // \u4FDD\u5B58\u6587\u4EF6\u5185\u5BB9
-      $('#saveBtn').click(function() {
-        const fileName = $('#fileSelect').val();
-        const content = $('#editor').summernote('code');
+      // \u89E3\u6790HTML\uFF0C\u63D0\u53D6\u6240\u6709class="section"\u7684\u5143\u7D20
+      function parseHtmlSections(html) {
+        // \u521B\u5EFA\u4E34\u65F6DOM\u89E3\u6790HTML
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
         
-        if (!content) {
-          $('#statusMsg').removeClass('alert-success alert-info')
-            .addClass('alert-danger')
-            .text('\u5185\u5BB9\u4E0D\u80FD\u4E3A\u7A7A\uFF01')
-            .show();
+        // \u627E\u5230\u6240\u6709class\u4E3Asection\u7684\u5143\u7D20
+        const sectionElements = doc.querySelectorAll('.section');
+        
+        if (sectionElements.length === 0) {
+          $('#sectionsContainer').html('<div class="alert alert-warning">\u672A\u627E\u5230class="section"\u7684\u5143\u7D20</div>');
           return;
         }
+        
+        sections = [];
+        let sectionHtml = '';
+        
+        // \u904D\u5386\u6240\u6709section\u5143\u7D20
+        sectionElements.forEach((sectionEl, index) => {
+          const sectionId = \`section-\${index}\`;
+          const sectionHtmlContent = sectionEl.innerHTML;
+          
+          // \u83B7\u53D6section\u6807\u9898\uFF08\u5982\u679C\u6709h2\u6807\u7B7E\uFF09
+          const titleEl = sectionEl.querySelector('h2');
+          const sectionTitle = titleEl ? titleEl.textContent : \`\u533A\u5757 \${index + 1}\`;
+          
+          sections.push({
+            id: sectionId,
+            element: sectionEl,
+            html: sectionHtmlContent,
+            index: index
+          });
+          
+          sectionHtml += \`
+            <div class="section-editor">
+              <div class="section-title collapsed" data-bs-toggle="collapse" data-bs-target="#collapse-\${sectionId}" aria-expanded="true">
+                <h3>\${sectionTitle}</h3>
+                <span class="collapse-icon">\u25BC</span>
+              </div>
+              <div id="collapse-\${sectionId}" class="collapse">
+                <div class="section-content">
+                  <div class="editor-container" id="editor-\${sectionId}"></div>
+                  <div class="section-preview"></div>
+                </div>
+              </div>
+            </div>
+          \`;
+        });
+        
+        // \u6DFB\u52A0\u7F16\u8F91\u5668\u5230\u9875\u9762
+        $('#sectionsContainer').html(sectionHtml);
+        
+        // \u521D\u59CB\u5316\u6240\u6709\u7F16\u8F91\u5668
+        sections.forEach(section => {
+          const editorEl = $(\`#editor-\${section.id}\`);
+          initSectionEditor(editorEl);
+          editorEl.summernote('code', section.html);
+        });
+
+        // \u521D\u59CB\u5316\u6298\u53E0\u529F\u80FD
+        const collapseElements = document.querySelectorAll('.collapse');
+        collapseElements.forEach(collapseEl => {
+          new bootstrap.Collapse(collapseEl, {
+            toggle: false
+          });
+        });
+
+        // \u6DFB\u52A0\u6298\u53E0\u56FE\u6807\u52A8\u753B
+        document.querySelectorAll('.section-title').forEach(titleEl => {
+          titleEl.addEventListener('click', function() {
+            const icon = this.querySelector('.collapse-icon');
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            icon.style.transform = isExpanded ? 'rotate(-90deg)' : 'rotate(0deg)';
+            this.setAttribute('aria-expanded', !isExpanded);
+          });
+        });
+      }
+      
+      // \u4FDD\u5B58\u6240\u6709\u66F4\u6539
+      $('#saveAllBtn').click(function() {
+        // \u66F4\u65B0\u539F\u59CBHTML\u4E2D\u7684\u5185\u5BB9
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(originalHtml, 'text/html');
+        
+        sections.forEach(section => {
+          const editorContent = $(\`#editor-\${section.id}\`).summernote('code');
+          const sectionEl = doc.querySelectorAll('.section')[section.index];
+          sectionEl.innerHTML = editorContent;
+        });
+        
+        // \u83B7\u53D6\u66F4\u65B0\u540E\u7684HTML
+        const updatedHtml = doc.documentElement.outerHTML;
+        
+        const fileName = $('#fileSelect').val();
         
         $('#statusMsg').removeClass('alert-success alert-danger')
           .addClass('alert-info')
           .text('\u6B63\u5728\u4FDD\u5B58...')
           .show();
           
-        // \u53D1\u9001\u5230\u670D\u52A1\u5668\u4FDD\u5B58 - \u4F7F\u7528 JSON \u8BF7\u6C42\u4F53
+        // \u53D1\u9001\u5230\u670D\u52A1\u5668\u4FDD\u5B58
         fetch('admin-page', {
           method: 'POST',
           headers: {
@@ -235,7 +351,7 @@ function adminPage() {
           },
           body: JSON.stringify({
             filePath: fileName,
-            content: content
+            content: updatedHtml
           })
         })
         .then(response => response.json())
@@ -364,8 +480,13 @@ var index_default = {
     return new Response(await response.text(), {
       headers: {
         "Content-Type": contentType,
-        "Access-Control-Allow-Origin": "*"
+        "Access-Control-Allow-Origin": "*",
         // 允許 CORS
+        "Cache-Control": contentType === "text/html" ? "no-cache, no-store, must-revalidate" : "public, max-age=86400",
+        // HTML 文件不缓存
+        "Pragma": contentType === "text/html" ? "no-cache" : "",
+        // 兼容 HTTP/1.0
+        "Expires": contentType === "text/html" ? "0" : ""
       }
     });
   }
@@ -402,7 +523,7 @@ var drainBody = /* @__PURE__ */ __name(async (request, env, _ctx, middlewareCtx)
 }, "drainBody");
 var middleware_ensure_req_body_drained_default = drainBody;
 
-// .wrangler/tmp/bundle-FQp0hw/middleware-insertion-facade.js
+// .wrangler/tmp/bundle-DOIEyJ/middleware-insertion-facade.js
 var __INTERNAL_WRANGLER_MIDDLEWARE__ = [
   middleware_ensure_req_body_drained_default
 ];
@@ -433,7 +554,7 @@ function __facade_invoke__(request, env, ctx, dispatch, finalMiddleware) {
 }
 __name(__facade_invoke__, "__facade_invoke__");
 
-// .wrangler/tmp/bundle-FQp0hw/middleware-loader.entry.ts
+// .wrangler/tmp/bundle-DOIEyJ/middleware-loader.entry.ts
 var __Facade_ScheduledController__ = class ___Facade_ScheduledController__ {
   constructor(scheduledTime, cron, noRetry) {
     this.scheduledTime = scheduledTime;
