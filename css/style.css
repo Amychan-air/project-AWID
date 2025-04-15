@@ -1,3 +1,10 @@
+@font-face {
+    font-family: 'GensenFont';
+    src: url('../font/gensen-font.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -27,19 +34,20 @@ body {
 header {
     text-align: center;
     padding: 20px 0;
+    background-color: rgba(255, 255, 255, 0.7);
+    border-radius: 10px;
+    margin-bottom: 20px;
 }
 
 .logo-container {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-items: center;
-    flex-wrap: wrap;
     margin-bottom: 20px;
 }
 
 .logo-container img {
     max-height: 80px;
-    margin: 10px;
 }
 
 .logo-item {
@@ -76,11 +84,33 @@ header {
     text-align: right;
 }
 
-h1 {
-    font-size: 28px;
-    color: #003366;
-    margin-bottom: 10px;
+.logo-item.text-center {
     text-align: center;
+}
+
+h1 {
+    font-size: 42px;
+    color: #333;
+    text-align: center;
+    font-weight: bold;
+    font-family: 'GensenFont', "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
+}
+
+h2.org-title {
+    font-size: 24px;
+    color: #333;
+    text-align: center;
+    margin: 0px;
+    font-family: 'GensenFont', "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
+}
+
+h3.sub-title {
+    font-size: 22px;
+    color: #333;
+    margin: 10px 0;
+    text-align: center;
+    font-weight: normal;
+    font-family: 'GensenFont', "Microsoft JhengHei", "微軟正黑體", Arial, sans-serif;
 }
 
 h2 {
@@ -309,12 +339,21 @@ footer a:hover {
 /* 手機版響應式設計 */
 @media screen and (max-width: 768px) {
     .container {
-        padding: 15px;
-        margin: 10px;
+        padding: 10px;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
     
     h1 {
-        font-size: 24px;
+        font-size: 25px;
+    }
+    
+    h2.org-title {
+        font-size: 18px;
+    }
+    
+    h3.sub-title {
+        font-size: 16px;
     }
     
     h2 {
@@ -326,20 +365,20 @@ footer a:hover {
     }
     
     .logo-text {
-        font-size: 20px;
-        max-width: 250px;
+        font-size: 18px;
     }
     
     .logo-container {
-        flex-direction: column;
+        margin-bottom: 10px;
     }
     
     .logo-item {
-        margin: 10px 0;
+        margin: 0 5px;
     }
     
     .section {
         padding: 10px;
+        margin-bottom: 20px;
     }
     
     .award-group {
@@ -347,8 +386,8 @@ footer a:hover {
     }
     
     .floating-signup {
-        bottom: 20px;
-        right: 20px;
+        bottom: 15px;
+        right: 15px;
         padding: 10px;
     }
     
@@ -356,17 +395,12 @@ footer a:hover {
         font-size: 16px;
     }
     
-    .floating-signup img {
-        width: 70px;
-        height: 70px;
-    }
-
     .whatsapp-text {
-        font-size: 10px;
+        font-size: 12px;
     }
-
+    
     .click-hint {
-        font-size: 10px;
+        font-size: 12px;
     }
     
     .footer-info {
@@ -374,20 +408,30 @@ footer a:hover {
     }
     
     .org-info, .honorable-members {
-        width: 100%;
+        min-width: 100%;
     }
     
     .honorable-members {
         margin-top: 20px;
     }
-
+    
     #poster-pc {
         display: none;
     }
-
+    
     #poster-phone {
         display: block;
     }   
+    
+    .caritas-title {
+        margin: 5px 0;
+    }
+    
+    .caritas-logo {
+        width: 40px;
+        margin-right: 0px;
+        margin-bottom: 4px;
+    }
 } 
 
 /* 語言切換按鈕樣式 */
@@ -438,4 +482,23 @@ footer a:hover {
     background-color: rgba(255, 255, 255, 0.9);
     font-weight: bold;
     color: #003366;
+}
+
+.caritas-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.caritas-logo {
+    width: 50px;
+    height: auto;
+}
+
+@media screen and (max-width: 768px) {
+    .caritas-logo {
+        width: 40px;
+        margin-right: 00px;
+    }
+    
 }
